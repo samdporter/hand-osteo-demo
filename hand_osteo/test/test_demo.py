@@ -1,9 +1,11 @@
 from pathlib import Path
 import sys
+import tomllib
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
+
 
 class HandOsteoTests(unittest.TestCase):
     def test_app_declares_native_monai_operators(self):
@@ -60,20 +62,38 @@ class HandOsteoTests(unittest.TestCase):
         self.assertIn("version: 0.1.0", config)
         self.assertIn("from app import build_app", main)
 
-    def test_pyproject_is_dependency_source(self):
-        project = (ROOT / "pyproject.toml").read_text()
-        self.assertIn('requires-python = "==3.11.*"', project)
-        self.assertIn('"monai-deploy-app-sdk==2.0.0"', project)
-        requirements = (ROOT / "requirements.txt").read_text()
-        self.assertIn("monai-deploy-app-sdk==2.0.0", requirements)
+    def test_dependency_manifests_pin_the_v100_stack(self):
+        expected = [
+            "monai-deploy-app-sdk==2.0.0",
+            "holoscan==2.0.0",
+        ]
+        project = tomllib.loads((ROOT / "pyproject.toml").read_text())
+        self.assertEqual(project["project"]["requires-python"], "==3.11.*")
+        self.assertEqual(project["project"]["dependencies"], expected)
 
-    def test_package_script_uses_monai_deploy_base_image(self):
+        requirements = (ROOT / "requirements.txt").read_text().splitlines()
+        self.assertEqual(requirements, expected)
+
+    def test_package_script_pins_the_v100_packaging_contract(self):
         source = (ROOT.parent / "package.sh").read_text()
-        self.assertIn("nvcr.io/nvidia/clara-holoscan/holoscan:v2.0.0-dgpu", source)
+        base_image = (
+            "nvcr.io/nvidia/clara-holoscan/holoscan:v2.0.0-dgpu"
+            "@sha256:20adbccd2c7b12dfb1798f6953f071631c3b85cd337858a7506f8e420add6d4a"
+        )
+        self.assertIn('PLATFORM="${MONAI_DEPLOY_PLATFORM:-x64-workstation}"', source)
+        self.assertIn('SDK_VERSION="${MONAI_DEPLOY_SDK_VERSION:-2.0.0}"', source)
+        self.assertIn(
+            f'BASE_IMAGE="${{MONAI_DEPLOY_BASE_IMAGE:-{base_image}}}"',
+            source,
+        )
         self.assertIn('docker pull "$BASE_IMAGE"', source)
         self.assertIn('monai-deploy package "$APP_DIR"', source)
         self.assertIn('--platform "$PLATFORM"', source)
         self.assertIn('--sdk-version "$SDK_VERSION"', source)
+        self.assertIn('--base-image "$BASE_IMAGE"', source)
+        self.assertNotIn("CUDA_VERSION", source)
+        self.assertNotIn("--cuda", source)
+
 
 if __name__ == "__main__":
     unittest.main()

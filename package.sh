@@ -5,10 +5,10 @@ ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 APP_DIR="${APP_DIR:-$ROOT_DIR/hand_osteo}"
 CONFIG_PATH="${CONFIG_PATH:-$APP_DIR/config.yaml}"
 TAG="${HAND_OSTEO_TAG:-hand_osteo:0.1.0}"
-PLATFORM="${MONAI_DEPLOY_PLATFORM:-x86_64}"
+PLATFORM="${MONAI_DEPLOY_PLATFORM:-x64-workstation}"
 SDK_VERSION="${MONAI_DEPLOY_SDK_VERSION:-2.0.0}"
 LOG_LEVEL="${MONAI_DEPLOY_LOG_LEVEL:-DEBUG}"
-BASE_IMAGE="${MONAI_DEPLOY_BASE_IMAGE:-nvcr.io/nvidia/clara-holoscan/holoscan:v2.0.0-dgpu}"
+BASE_IMAGE="${MONAI_DEPLOY_BASE_IMAGE:-nvcr.io/nvidia/clara-holoscan/holoscan:v2.0.0-dgpu@sha256:20adbccd2c7b12dfb1798f6953f071631c3b85cd337858a7506f8e420add6d4a}"
 
 command -v docker >/dev/null 2>&1 || {
     echo "docker is required" >&2
@@ -37,4 +37,5 @@ exec monai-deploy package "$APP_DIR" \
     --tag "$TAG" \
     --platform "$PLATFORM" \
     --sdk-version "$SDK_VERSION" \
+    --base-image "$BASE_IMAGE" \
     --log-level "$LOG_LEVEL"
