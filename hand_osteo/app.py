@@ -3,7 +3,7 @@ import sys
 
 DEMO_STEPS = (
     "DICOMDataLoaderOperator",
-    "DICOMSeriesSelectorOperator",
+    "DICOMSeriesSelectorOperator: hand X-ray series",
     "SecondMetacarpalYOLOOperator: 2nd metacarpal",
     "MCPMeasurer: MCP measurements",
     "PDFReportOperator: PDF bytes",
@@ -102,8 +102,11 @@ SERIES_RULES = """
 {
     "selections": [
         {
-            "name": "Hand MR series",
-            "conditions": {"Modality": "MR"}
+            "name": "Hand X-ray series",
+            "conditions": {
+                "Modality": "DX",
+                "BodyPartExamined": "HAND"
+            }
         }
     ]
 }

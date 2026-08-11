@@ -43,5 +43,3 @@ monai-deploy run hand_osteo-x64-workstation-dgpu-linux-amd64:0.0.1 \
   -i ./input \
   -o ./output
 ```
-
-The Dockerfile is only an optional local development image. The MAP is built by `monai-deploy package`.

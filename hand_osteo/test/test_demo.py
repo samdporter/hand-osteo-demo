@@ -24,6 +24,12 @@ class HandOsteoDemoTests(unittest.TestCase):
         ):
             self.assertIn(name, source)
 
+    def test_series_rules_target_hand_xray(self):
+        source = (ROOT / "app.py").read_text()
+        self.assertIn('"name": "Hand X-ray series"', source)
+        self.assertIn('"Modality": "DX"', source)
+        self.assertNotIn('"Modality": "MR"', source)
+
     def test_local_operator_files_declare_ports(self):
         contracts = {
             "second_metacarpal_yolo.py": (
@@ -64,12 +70,6 @@ class HandOsteoDemoTests(unittest.TestCase):
         self.assertIn('"monai-deploy-app-sdk==2.0.0"', project)
         requirements = (ROOT / "requirements.txt").read_text()
         self.assertIn("monai-deploy-app-sdk==2.0.0", requirements)
-
-    def test_cuda_dockerfile_targets_python_311(self):
-        source = (ROOT / "Dockerfile").read_text()
-        self.assertIn("nvcr.io/nvidia/cuda:12.2.0-runtime-ubuntu22.04", source)
-        self.assertIn("python3.11", source)
-
 
 if __name__ == "__main__":
     unittest.main()
