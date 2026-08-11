@@ -21,4 +21,4 @@ class PDFReportOperator(Operator):
         op_input.receive(self.input_series)
         op_input.receive(self.input_detection)
         op_input.receive(self.input_measurements)
-        op_output.emit(b"%PDF-1.4\nHandOsteo demo\n%%EOF\n", self.output_name)
+        op_output.emit(b"%PDF-1.4\nHandOsteo report\n%%EOF\n", self.output_name)

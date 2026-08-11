@@ -1,1 +1,2 @@
 monai-deploy-app-sdk==2.0.0
+holoscan-cli==2.9.0

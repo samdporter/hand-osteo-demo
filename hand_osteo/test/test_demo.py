@@ -5,16 +5,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from app import DEMO_STEPS, demo_output
-
-
-class HandOsteoDemoTests(unittest.TestCase):
-    def test_demo_output_lists_pipeline_in_order(self):
-        self.assertEqual(
-            demo_output().splitlines(),
-            ["HandOsteo demo", *DEMO_STEPS],
-        )
-
+class HandOsteoTests(unittest.TestCase):
     def test_app_declares_native_monai_operators(self):
         source = (ROOT / "app.py").read_text()
         for name in (
@@ -23,6 +14,11 @@ class HandOsteoDemoTests(unittest.TestCase):
             "DICOMEncapsulatedPDFWriterOperator",
         ):
             self.assertIn(name, source)
+
+    def test_app_has_no_print_demo_entrypoint(self):
+        source = (ROOT / "app.py").read_text()
+        self.assertNotIn("DEMO_STEPS", source)
+        self.assertNotIn("--demo", source)
 
     def test_series_rules_target_hand_xray(self):
         source = (ROOT / "app.py").read_text()
@@ -60,8 +56,8 @@ class HandOsteoDemoTests(unittest.TestCase):
     def test_map_packaging_files_are_present(self):
         config = (ROOT / "config.yaml").read_text()
         main = (ROOT / "__main__.py").read_text()
-        self.assertIn("title: HandOsteo Demo", config)
-        self.assertIn("version: 0.0.1", config)
+        self.assertIn("title: HandOsteo\n", config)
+        self.assertIn("version: 0.1.0", config)
         self.assertIn("from app import build_app", main)
 
     def test_pyproject_is_dependency_source(self):
@@ -70,6 +66,14 @@ class HandOsteoDemoTests(unittest.TestCase):
         self.assertIn('"monai-deploy-app-sdk==2.0.0"', project)
         requirements = (ROOT / "requirements.txt").read_text()
         self.assertIn("monai-deploy-app-sdk==2.0.0", requirements)
+
+    def test_package_script_uses_monai_deploy_base_image(self):
+        source = (ROOT.parent / "package.sh").read_text()
+        self.assertIn("nvcr.io/nvidia/clara-holoscan/holoscan:v2.0.0-dgpu", source)
+        self.assertIn('docker pull "$BASE_IMAGE"', source)
+        self.assertIn('monai-deploy package "$APP_DIR"', source)
+        self.assertIn('--platform "$PLATFORM"', source)
+        self.assertIn('--sdk-version "$SDK_VERSION"', source)
 
 if __name__ == "__main__":
     unittest.main()

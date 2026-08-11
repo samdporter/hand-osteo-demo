@@ -1,45 +1,29 @@
-# HandOsteo MAP demo
+# HandOsteo MAP
 
-This is a code-shape demo only. It does not find bones, measure joints, or produce clinical output.
+This is a minimal MONAI Deploy application shape for hand X-ray processing.
 
 The app is structured for MONAI Deploy App SDK 2.0.0 packaging on Linux with Python 3.11.
 
 `pyproject.toml` is the local project definition. `requirements.txt` is kept as the MAP packager input.
 
-Install the SDK:
+Install the SDK in the Linux/Python 3.11 environment:
 
 ```bash
 python3.11 -m pip install -r requirements.txt
 ```
 
-Print the placeholder workflow:
+Build the MAP from the repository root:
 
 ```bash
-python3.11 app.py --demo
+./package.sh
 ```
 
-Run the un-packaged app with DICOM input:
-
-```bash
-monai-deploy exec app.py -i ./input -o ./output
-```
-
-Build a MAP on the Linux x86-64 host:
-
-
-```bash
-monai-deploy package . \
-  --config ./config.yaml \
-  --tag hand_osteo:0.0.1 \
-  --platform x86_64 \
-  --sdk-version 2.0.0 \
-  --log-level DEBUG
-```
+The script pulls the MONAI Deploy SDK 2.0.0 x86-64 base image before running the packager. Set `HAND_OSTEO_TAG`, `MONAI_DEPLOY_BASE_IMAGE`, `MONAI_DEPLOY_PLATFORM`, or `MONAI_DEPLOY_LOG_LEVEL` to override defaults.
 
 Run the packaged MAP, using the image tag printed by the packager:
 
 ```bash
-monai-deploy run hand_osteo-x64-workstation-dgpu-linux-amd64:0.0.1 \
+monai-deploy run hand_osteo-x64-workstation-dgpu-linux-amd64:0.1.0 \
   -i ./input \
   -o ./output
 ```

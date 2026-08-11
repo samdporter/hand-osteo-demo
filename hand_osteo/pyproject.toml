@@ -1,7 +1,7 @@
 [project]
-name = "hand-osteo-demo"
+name = "hand-osteo"
 version = "0.1.0"
-description = "Minimal HandOsteo MONAI Deploy application shape"
+description = "HandOsteo MONAI Deploy application"
 requires-python = "==3.11.*"
 dependencies = [
     "monai-deploy-app-sdk==2.0.0",

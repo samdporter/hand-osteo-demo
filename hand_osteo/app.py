@@ -1,20 +1,3 @@
-import sys
-
-
-DEMO_STEPS = (
-    "DICOMDataLoaderOperator",
-    "DICOMSeriesSelectorOperator: hand X-ray series",
-    "SecondMetacarpalYOLOOperator: 2nd metacarpal",
-    "MCPMeasurer: MCP measurements",
-    "PDFReportOperator: PDF bytes",
-    "DICOMEncapsulatedPDFWriterOperator: DICOM PDF",
-)
-
-
-def demo_output():
-    return "\n".join(("HandOsteo demo", *DEMO_STEPS))
-
-
 def build_app():
     from pathlib import Path
 
@@ -30,9 +13,9 @@ def build_app():
     from operators.second_metacarpal_yolo import SecondMetacarpalYOLOOperator
 
     class HandOsteoApp(Application):
-        name = "hand_osteo_demo"
-        description = "HandOsteo application shape demo"
-        version = "0.0.1"
+        name = "hand_osteo"
+        description = "HandOsteo MONAI Deploy application"
+        version = "0.1.0"
 
         def compose(self):
             context = Application.init_app_context(self.argv)
@@ -111,17 +94,3 @@ SERIES_RULES = """
     ]
 }
 """
-
-
-def main(argv=None):
-    argv = sys.argv[1:] if argv is None else argv
-    if not argv or "--demo" in argv:
-        print(demo_output())
-        return 0
-    print("HandOsteo graph declared; use MONAI Deploy with input and output paths.")
-    build_app()().run()
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
