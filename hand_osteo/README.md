@@ -30,9 +30,11 @@ Build the MAP from the repository root:
 ./package.sh
 ```
 
-The script pulls the signed Holoscan `v2.0.0-dgpu` image and locks it to NGC index digest `sha256:20adbccd2c7b12dfb1798f6953f071631c3b85cd337858a7506f8e420add6d4a`. Its packager platform is `x64-workstation`, the value accepted by the Holoscan 2.0 CLI.
+The script pulls the Holoscan `v2.0.0-dgpu` base image. Its packager platform is `x64-workstation`, the value accepted by the Holoscan 2.0 CLI.
 
-Set `HAND_OSTEO_TAG`, `MONAI_DEPLOY_BASE_IMAGE`, `MONAI_DEPLOY_PLATFORM`, `MONAI_DEPLOY_SDK_VERSION`, or `MONAI_DEPLOY_LOG_LEVEL` to override a default. Overrides can break the tested version relationship and should normally remain unset.
+## The model
+
+`models/second_metacarpal.ts` is a fake placeholder model. `package.sh` passes it to the packager with `--models`, which copies it into the MAP. The application reads the path back as `context.model_path` and hands it to `SecondMetacarpalYOLOOperator`, which prints it.
 
 Run the packaged MAP, using the image tag printed by the packager:
 

@@ -5,7 +5,8 @@ class SecondMetacarpalYOLOOperator(Operator):
     input_name = "study_selected_series_list"
     output_name = "second_metacarpal_detection"
 
-    def __init__(self, fragment: Fragment, *args, **kwargs):
+    def __init__(self, fragment: Fragment, *args, model_path, **kwargs):
+        self.model_path = model_path
         super().__init__(fragment, *args, **kwargs)
 
     def setup(self, spec: OperatorSpec):
@@ -13,6 +14,6 @@ class SecondMetacarpalYOLOOperator(Operator):
         spec.output(self.output_name)
 
     def compute(self, op_input: InputContext, op_output: OutputContext, context):
-        print("SecondMetacarpalYOLOOperator: 2nd metacarpal")
+        print(f"SecondMetacarpalYOLOOperator: using model {self.model_path}")
         op_input.receive(self.input_name)
         op_output.emit({"label": "second_metacarpal"}, self.output_name)

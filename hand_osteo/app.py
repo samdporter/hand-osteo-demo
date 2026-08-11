@@ -30,7 +30,11 @@ def build_app():
                 rules=SERIES_RULES,
                 name="dicom_selector",
             )
-            detector = SecondMetacarpalYOLOOperator(self, name="second_metacarpal_yolo")
+            detector = SecondMetacarpalYOLOOperator(
+                self,
+                model_path=context.model_path,
+                name="second_metacarpal_yolo",
+            )
             measurer = MCPMeasurer(self, name="mcp_measurer")
             report = PDFReportOperator(self, name="pdf_report")
             writer = DICOMEncapsulatedPDFWriterOperator(
