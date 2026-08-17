@@ -5,6 +5,7 @@ description = "HandOsteo MONAI Deploy application"
 requires-python = "==3.11.*"
 dependencies = [
     "monai-deploy-app-sdk==2.0.0",
+    "monai==1.3.0",
     "holoscan==2.0.0",
     "pydicom==2.4.4",
     "highdicom==0.22.0",
