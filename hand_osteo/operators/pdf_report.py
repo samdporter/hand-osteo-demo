@@ -1,3 +1,8 @@
+from io import BytesIO
+
+from reportlab.lib.pagesizes import LETTER
+from reportlab.pdfgen import canvas
+
 from monai.deploy.core import Fragment, InputContext, Operator, OperatorSpec, OutputContext
 
 
@@ -19,6 +24,22 @@ class PDFReportOperator(Operator):
     def compute(self, op_input: InputContext, op_output: OutputContext, context):
         print("PDFReportOperator: PDF bytes")
         op_input.receive(self.input_series)
-        op_input.receive(self.input_detection)
-        op_input.receive(self.input_measurements)
-        op_output.emit(b"%PDF-1.4\nHandOsteo report\n%%EOF\n", self.output_name)
+        detection = op_input.receive(self.input_detection)
+        measurements = op_input.receive(self.input_measurements)
+        op_output.emit(self._build_pdf(detection, measurements), self.output_name)
+
+    def _build_pdf(self, detection, measurements) -> bytes:
+        buffer = BytesIO()
+        pdf = canvas.Canvas(buffer, pagesize=LETTER)
+        _, height = LETTER
+
+        pdf.setFont("Helvetica-Bold", 16)
+        pdf.drawString(72, height - 72, "HandOsteo Report")
+
+        pdf.setFont("Helvetica", 11)
+        pdf.drawString(72, height - 108, f"Detection: {detection}")
+        pdf.drawString(72, height - 126, f"MCP measurements: {measurements}")
+
+        pdf.showPage()
+        pdf.save()
+        return buffer.getvalue()
