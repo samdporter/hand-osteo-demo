@@ -6,6 +6,7 @@ requires-python = "==3.11.*"
 dependencies = [
     "monai-deploy-app-sdk==2.0.0",
     "holoscan==2.0.0",
+    "pydicom==2.4.4",
 ]
 
 [tool.uv]
